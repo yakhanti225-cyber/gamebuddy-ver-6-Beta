@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#353b47">
+<title>GameBuddy</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#262a33;color:#f2f2f5;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;-webkit-tap-highlight-color:transparent}
+#app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:84px;background:#2f3440}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:12px 14px;background:#353b47;border-bottom:1px solid #434a58}
+.top h1{flex:1;margin:0;font-size:18px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .right{display:flex;gap:8px;min-width:38px;justify-content:flex-end}
+.icon{width:38px;height:38px;border-radius:50%;border:0;background:#4a5160;cursor:pointer;font-size:16px;display:inline-grid;place-items:center;flex-shrink:0}
+.icon.ghost-space{visibility:hidden}
+main{padding:14px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;display:flex;background:#353b47;border-top:1px solid #434a58;z-index:6;padding-bottom:env(safe-area-inset-bottom)}
+.bottom a{flex:1;text-align:center;padding:8px 0 10px;font-size:11px;color:#9aa1b1;position:relative}
+.bottom .adm{display:none}
+.bottom a.on{color:#f28bb4}
+.ni{display:block;font-size:20px;line-height:1.3}
+.nbadge,.ndot{position:absolute;top:4px;left:calc(50% + 6px);background:#ef5350;color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;min-width:16px}
+.ndot{width:9px;height:9px;min-width:0;padding:0;top:6px;left:calc(50% + 14px)}
+.card{background:#3a3f4b;border-radius:16px;padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:16px}
+.row{display:flex;align-items:center;gap:12px}
+.row.gap{justify-content:center;gap:10px}
+.grow{flex:1;min-width:0}
+.link{display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;border:0;text-align:left;font-size:15px;color:inherit}
+.ic{width:44px;height:44px;border-radius:50%;background:#4b5263;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.av{width:52px;height:52px;border-radius:50%;background:#4b5263;display:grid;place-items:center;font-size:28px;flex-shrink:0;border:2px solid #5a6172}
+.av.sm{width:30px;height:30px;font-size:16px;border-width:1px}
+.av.lg{width:96px;height:96px;font-size:56px;margin:12px auto}
+.av.pick{width:48px;height:48px;cursor:pointer;border:2px solid transparent}
+.av.pick.on{border-color:#f28bb4}
+.avpick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.avrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.name{font-weight:600}
+.muted{color:#9aa1b1}
+.small{font-size:12px}
+.center{text-align:center}
+.sec{font-size:14px;color:#9aa1b1;margin:16px 4px 8px;font-weight:600;display:flex;align-items:center;gap:8px}
+.empty{text-align:center;color:#9aa1b1;padding:30px 10px;line-height:1.7}
+.list{display:flex;flex-direction:column}
+.ellipsis{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-block;background:#4b5263;border-radius:12px;padding:2px 9px;font-size:12px;margin:2px 4px 2px 0}
+.chips{margin:4px 0}
+.tag{background:#4b5263;border-radius:8px;padding:3px 8px;font-size:12px;color:#c9ced9;white-space:nowrap}
+.badge{background:#ef5350;color:#fff;border-radius:10px;padding:1px 7px;font-size:12px;min-width:20px;text-align:center}
+.btn{border:0;border-radius:22px;padding:10px 16px;cursor:pointer;background:#4b5263;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn.primary,.btn.pink{background:#f28bb4;color:#2b1a24}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.block{width:100%;margin-top:12px}
+.danger{color:#ef7a7a}
+.seg{display:flex;background:#434a58;border-radius:22px;padding:4px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:none;padding:9px;border-radius:18px;cursor:pointer;color:#c9ced9;font-weight:600}
+.seg button.on{background:#f28bb4;color:#2b1a24}
+.filters{display:flex;gap:8px;margin-bottom:8px}
+.search,.form input,.form select,.form textarea,.composer input,.notice input,#rc{width:100%;background:#434a58;border:1px solid #515a6b;border-radius:12px;padding:10px 12px;outline:none}
+.filters .search{flex:1;width:auto}
+.filters select{background:#434a58;border:1px solid #515a6b;border-radius:12px;padding:10px}
+.form label{display:block;margin:12px 0 6px;font-size:13px;color:#c9ced9}
+.form textarea{min-height:70px;resize:vertical}
+.form .btn{margin-top:16px;width:100%}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(120deg,#4f7fd0,#8b5cd6)}
+.hero .muted{color:#e4e8f5}
+.hero .btn{background:#fff;color:#333}
+.games{display:flex;flex-wrap:wrap;gap:8px}
+.game-btn{background:#434a58;border:1px solid #515a6b;border-radius:16px;padding:7px 12px;cursor:pointer;font-size:13px}
+.game-btn.on{background:#f28bb4;color:#2b1a24;border-color:#f28bb4}
+.notice{background:#434a58;border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;color:#c9ced9;font-size:14px}
+.msgs{height:calc(100vh - 250px);min-height:280px;overflow-y:auto;padding:4px 2px 12px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:78%;align-self:flex-start}
+.msg.mine{align-self:flex-end;text-align:right}
+.sender{font-size:11px;color:#9aa1b1;margin:0 4px 2px}
+.bubble{background:#4b5263;padding:9px 13px;border-radius:16px;border-top-left-radius:4px;white-space:pre-wrap;word-break:break-word;display:inline-block;text-align:left}
+.msg.mine .bubble{background:#f28bb4;color:#2b1a24;border-top-left-radius:16px;border-top-right-radius:4px}
+.t{font-size:10px;color:#9aa1b1;margin-top:2px}
+.composer{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:492px;display:flex;gap:8px;background:#2f3440;padding:6px 0}
+.composer input{flex:1;width:auto}
+.profile{background:#3a3f4b;border-radius:18px;overflow:hidden;margin-bottom:12px}
+.cover{height:90px;background:linear-gradient(120deg,#5aa7e6,#7fc6f0)}
+.pcard{padding:0 16px 16px;margin-top:-40px;text-align:center}
+.pav{width:88px;height:88px;border-radius:50%;margin:0 auto;background:#4b5263;border:4px solid #3a3f4b;display:grid;place-items:center;font-size:48px}
+.pname h2{margin:8px 0 0;font-size:20px}
+.stars{color:#ffb74d;letter-spacing:2px;font-size:16px;margin:6px 0}
+.stars.sm{font-size:12px;letter-spacing:1px;margin:0}
+.info{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:13px;color:#c9ced9;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.stat{background:#3a3f4b;border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;border:0;color:inherit}
+.stat b{display:block;font-size:20px;color:#8ec5f0}
+.stat span{font-size:12px;color:#9aa1b1}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+.rev{border-top:1px solid #464d5c;padding:10px 0}
+.rev-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.starpick{display:flex;gap:6px;margin:8px 0}
+.starpick button{background:none;border:0;font-size:30px;color:#5c6375;cursor:pointer;padding:0}
+.starpick button.on{color:#ffb74d}
+.link-name{cursor:pointer}
+.match-box{text-align:center;padding:24px 16px}
+.big{font-size:56px}
+.radar{font-size:56px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{transform:scale(1.15)}}
+.notif.unread{border-left:3px solid #f28bb4}
+.auth{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px;max-width:420px;margin:0 auto}
+.logo{font-size:56px;text-align:center}
+.brand{text-align:center;margin:4px 0 0}
+.big-num{font-size:36px;font-weight:700;color:#8ec5f0;margin:4px 0}
+.ad{margin:14px 0 0;padding:10px;border-radius:12px;background:#2c313b;border:1px dashed #515a6b;text-align:center}
+.ad-slot{font-size:13px;color:#c9ced9;padding:14px 0}
+.attach{cursor:pointer;width:38px;height:38px;flex-shrink:0;background:#4a5160;border-radius:50%;display:grid;place-items:center;font-size:18px}
+.bubble img{max-width:220px;border-radius:12px;display:block}
+.msg.mine .bubble img{margin-left:auto}
+.stats.six{grid-template-columns:repeat(3,1fr)}
+
+/* ===== คอมพิวเตอร์ (หน้าจอกว้างกว่า 900px) ===== */
+@media (min-width: 900px) {
+  #app{max-width:none;padding-left:220px;padding-bottom:0}
+  main{max-width:980px;margin:0 auto}
+  .top{padding-left:24px;padding-right:24px}
+  .bottom{position:fixed;top:0;bottom:0;left:0;transform:none;width:220px;max-width:none;flex-direction:column;border-top:0;border-right:1px solid #434a58;padding:16px 10px;background:#303643}
+  .bottom a{flex:none;display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;font-size:15px;border-radius:12px;margin-bottom:4px;position:relative}
+  .bottom a.on{background:#4b5263}
+  .ni{display:inline-block;font-size:20px;width:26px;text-align:center}
+  .nbadge{position:static;margin-left:auto}
+  .ndot{position:static;margin-left:auto;width:9px;height:9px;padding:0;min-width:0}
+  .composer{left:calc(50% + 110px);bottom:16px;width:calc(100% - 300px);max-width:900px}
+  #list.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #list.list > .empty{grid-column:1/-1}
+  .stats.six{grid-template-columns:repeat(6,1fr)}
+  .msgs{height:calc(100vh - 240px)}
+  .auth{max-width:460px}
+  .toast{left:calc(50% + 110px)}
+  .bottom .adm{display:flex}
+}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#f2f2f5;color:#222;padding:10px 16px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:50;max-width:90%;font-size:14px;animation:up .25s}
+@keyframes up{from{opacity:0;transform:translate(-50%,10px)}}
+/* ===== ธีมไทย: ครามและทอง ===== */
+html,body{background:#161a2e;color:#f5efe0;font-family:"Prompt","Sarabun",system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{background:#1e2440}
+.top,.bottom{background:#1a1f38;border-color:#3a4470}
+.bottom{border-right-color:#3a4470}
+.card,.profile,.stat{background:#272e52}
+.pav{background:#343d66;border-color:#272e52}
+.av,.ic,.attach,.icon{background:#343d66;border-color:#3a4470}
+.hero,.cover{background:linear-gradient(120deg,#2c3a7a,#5b3f8c)}
+.hero .btn{background:#f5efe0;color:#2a1f08}
+.btn{background:#343d66;color:#f5efe0}
+.btn.primary,.btn.pink{background:#e8b64c;color:#2a1f08}
+.btn.sm.pink{background:#e8b64c;color:#2a1f08}
+.seg{background:#2c3462}
+.seg button{color:#c7cde6}
+.seg button.on{background:#e8b64c;color:#2a1f08}
+.bottom a.on{color:#e8b64c}
+@media (min-width:900px){.bottom a.on{background:#343d66}}
+.game-btn,.search,.form input,.form select,.form textarea,.composer input,.notice input,#rc,.filters select{background:#2c3462;border-color:#3a4470;color:#f5efe0}
+.game-btn.on{background:#e8b64c;color:#2a1f08;border-color:#e8b64c}
+.notice{background:#2c3462;color:#c7cde6}
+.bubble{background:#343d66}
+.msg.mine .bubble{background:#e8b64c;color:#2a1f08}
+.chip,.tag{background:#343d66;color:#c7cde6}
+.stat b,.big-num{color:#e8b64c}
+.stat span,.sec,.muted,.small{color:#a9b1d6}
+.hero .muted{color:#e6e1f5}
+.stars{color:#e8b64c}
+.starpick button{color:#4a5382}
+.starpick button.on,.stars.sm{color:#e8b64c}
+.rev{border-top-color:#3a4470}
+.ad{background:#1f2544;border-color:#3a4470}
+.composer{background:#1e2440}
+.toast{background:#f5efe0;color:#1e2440}
+.danger{color:#ff8a80}
+.card.notif.unread{border-left-color:#e8b64c}
+.notif.unread{border-left-color:#e8b64c}
+.av,.pav{position:relative}
+.av img,.pav img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.av img.frm,.pav img.frm{position:absolute;left:-12%;top:-12%;width:124%;height:124%;border-radius:0;object-fit:contain;pointer-events:none}
+.logo-img{width:120px;height:auto;display:block;margin:0 auto 4px}
+.mini-logo{width:30px;height:30px;object-fit:contain;margin:0 4px}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ===== State =====
+const state = {
+  me: null, meta: null,
+  token: localStorage.getItem('gb_token'),
+  match: { searching: false },
+  matchFound: null,
+  notifUnread: 0,
+  wallet: null,
+};
+let gTimer = null, vTimer = null, lastMatchKey = '';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ICON = { friend_request: '👋', friend: '🤝', match: '🎮', rating: '⭐', room: '🧩' };
+const NOTIF_LINK = { friend_request: '#/friends', friend: '#/chat/dm', match: '#/match', rating: '#/me', room: '#/home' };
+const go = (h) => { location.hash = h; };
+const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+const fmtTime = (ts) => new Date(ts).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+const stars = (n) => { const r = Math.round(n || 0); return '★'.repeat(r) + '☆'.repeat(5 - r); };
+function timeAgo(ts) {
+  const s = (Date.now() - ts) / 1000;
+  if (s < 60) return 'เมื่อสักครู่';
+  if (s < 3600) return Math.floor(s / 60) + ' นาทีที่แล้ว';
+  if (s < 86400) return Math.floor(s / 3600) + ' ชม.ที่แล้ว';
+  return new Date(ts).toLocaleDateString('th-TH');
+}
+// รูปโปรไฟล์และกรอบเป็นรหัสรูป (ขึ้นต้นด้วย i) หรือ emoji
+const isImgRef = (v) => typeof v === 'string' && v.startsWith('i');
+const imgSrc = (id) => `/api/images/${id}?t=${encodeURIComponent(state.token || '')}`;
+function avatarInner(u) {
+  const inner = isImgRef(u?.avatar) ? `<img src="${imgSrc(u.avatar)}" alt="">` : esc(u?.avatar || '🙂');
+  const frame = isImgRef(u?.frame) ? `<img class="frm" src="${imgSrc(u.frame)}" alt="">` : '';
+  return inner + frame;
+}
+const avatarHtml = (u, cls = '') => `<div class="av ${cls}">${avatarInner(u)}</div>`;
+function toast(html) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = html;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+// ===== API =====
+async function api(method, url, body) {
+  const opt = { method, headers: {} };
+  if (state.token) opt.headers.Authorization = 'Bearer ' + state.token;
+  if (body !== undefined) { opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }
+  let res;
+  try { res = await fetch(url, opt); } catch { throw new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'); }
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401 && !url.startsWith('/api/auth')) { forceLogout(); throw new Error('กรุณาเข้าสู่ระบบใหม่'); }
+  if (!res.ok) throw new Error(data.error || 'เกิดข้อผิดพลาด');
+  return data;
+}
+async function act(fn) {
+  try { await fn(); render(); } catch (e) { toast(esc(e.message)); }
+}
+const acceptReq = (id) => act(() => api('POST', `/api/friends/${id}/accept`));
+const dropReq = (id, msg = 'ยืนยัน?') => { if (confirm(msg)) act(() => api('DELETE', `/api/friends/${id}`)); };
+const addFriend = (uid) => act(async () => {
+  const r = await api('POST', '/api/friends/request', { userId: uid });
+  toast(r.status === 'friends' ? 'เป็นเพื่อนกันแล้ว 🎉' : 'ส่งคำขอเป็นเพื่อนแล้ว');
+});
+async function logout() {
+  try { await api('POST', '/api/auth/logout'); } catch {}
+  forceLogout();
+  go('#/home');
+}
+function forceLogout() {
+  state.token = null; state.me = null;
+  localStorage.removeItem('gb_token');
+  stopTimers();
+  renderAuth('login');
+}
+function stopTimers() { clearInterval(gTimer); clearInterval(vTimer); gTimer = vTimer = null; }
+function stopViewTimer() { clearInterval(vTimer); vTimer = null; }
+
+// ===== Global polling: match result, badges =====
+function startPolling() { stopTimers(); gTimer = setInterval(globalTick, 3000); globalTick(); }
+async function globalTick() {
+  if (!state.token || !state.me) return;
+  try {
+    const m = await api('GET', '/api/match');
+    if (m.result) {
+      state.matchFound = m.result;
+      toast(`🎉 พบคู่เล่น ${esc(m.result.match.game)} กับ ${esc(m.result.partner.displayName)}`);
+    }
+    state.match = m;
+    const c = await api('GET', '/api/notifications/count');
+    state.notifUnread = c.unread;
+    state.wallet = await api('GET', '/api/wallet');
+    updateNav();
+    const key = JSON.stringify([m.searching, m.game, !!state.matchFound]);
+    if (location.hash.startsWith('#/match') && key !== lastMatchKey) drawMatch();
+    lastMatchKey = key;
+  } catch {}
+}
+function updateNav() {
+  const b = $('#notifBadge');
+  if (b) { b.textContent = state.notifUnread; b.hidden = !state.notifUnread; }
+  const d = $('#matchDot');
+  if (d) d.hidden = !state.match?.searching;
+}
+
+// ===== Auth screen =====
+function renderAuth(mode = 'login') {
+  stopViewTimer();
+  $('#app').innerHTML = `<div class="auth">
+    <img class="logo-img" src="data:image/png;base64,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" alt="GameBuddy">
+    <h1 class="brand">GameBuddy</h1>
+    <p class="muted center">หาเพื่อนร่วมเล่นเกม</p>
+    <div class="card">
+      <div class="seg">
+        <button id="tLogin" class="${mode === 'login' ? 'on' : ''}">เข้าสู่ระบบ</button>
+        <button id="tReg" class="${mode === 'reg' ? 'on' : ''}">สมัครสมาชิก</button>
+      </div>
+      <form id="authForm" class="form">
+        ${mode === 'reg' ? `<label>ชื่อที่แสดง<input name="displayName" maxlength="24" placeholder="เช่น ฟ้า"></label>` : ''}
+        <label>ชื่อผู้ใช้<input name="username" autocomplete="username" placeholder="a-z, 0-9, _ (3-16 ตัว)"></label>
+        <label>รหัสผ่าน<input name="password" type="password" autocomplete="${mode === 'reg' ? 'new-password' : 'current-password'}"></label>
+        <button class="btn primary">${mode === 'reg' ? 'สมัครและเข้าใช้งาน' : 'เข้าสู่ระบบ'}</button>
+      </form>
+      <a class="btn block" href="/api/auth/google" style="background:#fff;color:#333;text-decoration:none;text-align:center">🔐 เข้าสู่ระบบด้วย Google</a>
+      ${mode === 'login' && state.meta?.demo ? '<p class="muted small center">บัญชีทดลอง: demo1 ถึง demo5 รหัสผ่าน demo1234</p>' : ''}
+    </div>
+  </div>`;
+  $('#tLogin').onclick = () => renderAuth('login');
+  $('#tReg').onclick = () => renderAuth('reg');
+  $('#authForm').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('POST', mode === 'reg' ? '/api/auth/register' : '/api/auth/login', Object.fromEntries(new FormData(e.target)));
+      state.token = r.token;
+      localStorage.setItem('gb_token', r.token);
+      state.me = r.user;
+      startPolling();
+      go('#/home');
+      render();
+    } catch (err) { toast(esc(err.message)); }
+  };
+}
+
+// ===== Layout =====
+function navItem(key, icon, label, active) {
+  const badge = key === 'notif'
+    ? `<span class="nbadge" id="notifBadge" ${state.notifUnread ? '' : 'hidden'}>${state.notifUnread}</span>` : '';
+  const dot = key === 'match'
+    ? `<span class="ndot" id="matchDot" ${state.match?.searching ? '' : 'hidden'}></span>` : '';
+  return `<a href="#/${key}" class="${active === key ? 'on' : ''}"><span class="ni">${icon}</span>${badge}${dot}<span>${label}</span></a>`;
+}
+const adHtml = `<div class="ad"><div class="small muted">โฆษณา</div><div class="ad-slot">พื้นที่โฆษณา (วางโค้ดเครือข่ายโฆษณาตรงนี้)<br><a href="#/wallet">ปิดโฆษณาด้วยเครดิต</a></div></div>`;
+function layout({ title, back, right = '', tab, body }) {
+  const showAd = ['home', 'notif', 'me'].includes(tab) && !state.wallet?.adFree;
+  $('#app').innerHTML = `
+    <header class="top">
+      ${back ? `<button class="icon" onclick="history.length>1?history.back():go('#/home')">‹</button>` : '<img class="mini-logo" src="data:image/png;base64,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" alt="">'}
+      <h1>${esc(title)}</h1>
+      <div class="right">${right}</div>
+    </header>
+    <main>${body}${showAd ? adHtml : ''}</main>
+    <nav class="bottom">
+      ${navItem('home', '🏠', 'หน้าแรก', tab)}
+      ${navItem('chat', '💬', 'แชท', tab)}
+      ${navItem('match', '🎮', 'Auto match', tab)}
+      ${navItem('notif', '🔔', 'แจ้งเตือน', tab)}
+      ${navItem('me', '👤', 'My Page', tab)}
+      ${state.me?.isAdmin ? `<a href="#/admin" class="adm ${location.hash.startsWith('#/admin') ? 'on' : ''}"><span class="ni">🛠️</span><span>ผู้ดูแลระบบ</span></a>` : ''}
+    </nav>`;
+  window.scrollTo(0, 0);
+}
+
+// ===== Router =====
+window.addEventListener('hashchange', render);
+async function render() {
+  if (!state.me) return renderAuth('login');
+  stopViewTimer();
+  const [view = 'home', arg] = (location.hash || '#/home').replace(/^#\/?/, '').split('/');
+  try {
+    switch (view) {
+      case 'home': return await vHome();
+      case 'find': return await vFind();
+      case 'chat': return await vChat(arg || 'dm');
+      case 'dm': return await vDM(arg);
+      case 'group': return await vGroup(arg);
+      case 'groups-new': return vGroupNew();
+      case 'match': return vMatch();
+      case 'notif': return await vNotif();
+      case 'me': return await vMe();
+      case 'me-edit': return await vEdit();
+      case 'wallet': return await vWallet();
+      case 'admin': return await vAdmin(arg || 'stats');
+      case 'user': return await vUser(arg);
+      case 'friends': return await vFriends();
+      case 'visitors': return await vVisitors();
+      case 'matches': return await vMatches();
+      case 'room-new': return vRoomNew();
+      case 'room': return await vRoom(arg);
+      default: go('#/home');
+    }
+  } catch (e) { toast(esc(e.message)); }
+}
+
+// ===== Shared pieces =====
+function userCard(u) {
+  return `<div class="card row link" onclick="go('#/user/${u.id}')">
+    ${avatarHtml(u)}
+    <div class="grow">
+      <div class="name">${esc(u.displayName)} <span class="muted small">@${esc(u.username)}</span></div>
+      <div class="chips">${u.games.slice(0, 3).map((g) => `<span class="chip">${esc(g)}</span>`).join('')}</div>
+      <div class="muted small">${esc(u.platform)} · ${esc(u.level)} · ⭐ ${u.rating.avg || '-'} (${u.rating.count})</div>
+    </div>
+    ${relBtn(u)}
+  </div>`;
+}
+function relBtn(u) {
+  switch (u.rel) {
+    case 'friends': return `<button class="btn sm" onclick="event.stopPropagation();go('#/dm/${u.id}')">💬</button>`;
+    case 'none': return `<button class="btn sm pink" onclick="event.stopPropagation();addFriend('${u.id}')">+ เพิ่ม</button>`;
+    case 'outgoing': return `<span class="tag">ส่งคำขอแล้ว</span>`;
+    case 'incoming': return `<span class="tag">รอตอบรับ</span>`;
+    default: return '';
+  }
+}
+function profileHeader(u) {
+  return `<div class="profile">
+    <div class="cover"></div>
+    <div class="pcard">
+      <div class="pav">${avatarInner(u)}</div>
+      <div class="pname"><h2>${esc(u.displayName)}</h2><span class="muted small">@${esc(u.username)}</span></div>
+      <div class="stars">${stars(u.rating.avg)}</div>
+      <div class="muted small">${u.rating.avg || '-'} (${u.rating.count} รีวิว)</div>
+      <p>${esc(u.bio || 'ยังไม่มีคำแนะนำตัว')}</p>
+      <div class="chips">${u.games.map((g) => `<span class="chip">${esc(g)}</span>`).join('') || '<span class="muted small">ยังไม่ได้เลือกเกม</span>'}</div>
+      <div class="info"><span>🖥️ ${esc(u.platform)}</span><span>🏅 ${esc(u.level)}</span>${u.schedule ? `<span>🕒 ${esc(u.schedule)}</span>` : ''}</div>
+    </div>
+  </div>`;
+}
+function ratingsHtml(u) {
+  if (!u.ratings?.length) return '<div class="muted small">ยังไม่มีรีวิว</div>';
+  return u.ratings.map((r) => `<div class="rev">
+    <div class="rev-h"><b>${esc(r.from?.displayName || 'ผู้ใช้')}</b><span class="stars sm">${stars(r.score)}</span></div>
+    ${r.comment ? `<div>${esc(r.comment)}</div>` : ''}
+    <div class="muted small">${timeAgo(r.at)}</div>
+  </div>`).join('');
+}
+function bubbles(msgs, withName) {
+  if (!msgs.length) return '<div class="empty">เริ่มทักทายกันได้เลย 👋</div>';
+  return msgs.map((m) => `<div class="msg ${m.mine ? 'mine' : ''}">
+    ${withName && !m.mine && m.from ? `<div class="sender">${esc(m.from.displayName)}</div>` : ''}
+    ${m.image ? `<img src="${m.image}" alt="รูปที่ส่ง">` : ''}
+    ${m.text ? `<div class="bubble">${esc(m.text)}</div>` : ''}
+    <div class="t">${fmtTime(m.at)}</div>
+  </div>`).join('');
+}
+function paintMsgs(el, html, force) {
+  const near = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+  el.innerHTML = html;
+  if (force || near) el.scrollTop = el.scrollHeight;
+}
+const composerHtml = `<form class="composer" id="composer"><label class="attach" title="ส่งรูป">🖼️<input id="imgIn" type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden></label><input id="msgIn" maxlength="500" placeholder="พิมพ์ข้อความ..." autocomplete="off"><button class="btn primary">ส่ง</button></form>`;
+async function refreshWallet() { try { state.wallet = await api('GET', '/api/wallet'); } catch {} }
+function bindComposer(fn) {
+  const f = $('#composer');
+  if (!f) return;
+  let image = null;
+  const pick = $('#imgIn');
+  pick.onchange = () => {
+    const file = pick.files[0];
+    if (!file) return;
+    if (file.size > 1.5 * 1024 * 1024) { toast('รูปใหญ่เกิน 1.5 MB'); pick.value = ''; return; }
+    const r = new FileReader();
+    r.onload = () => { image = r.result; toast(`แนบรูปแล้ว (ส่งจะใช้ ${state.wallet?.imageCost ?? 5} เครดิต)`); };
+    r.readAsDataURL(file);
+  };
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    const i = $('#msgIn');
+    const t = i.value.trim();
+    if (!t && !image) return;
+    const sendImg = image;
+    image = null;
+    pick.value = '';
+    i.value = '';
+    try { await fn(t, sendImg); await refreshWallet(); }
+    catch (err) { toast(esc(err.message)); i.value = t; image = sendImg; }
+  };
+}
+const gameOptions = () => `<option value="">ทุกเกม</option>` + state.meta.games.map((g) => `<option>${esc(g)}</option>`).join('');
+async function loadUsers() {
+  const q = $('#q').value.trim();
+  const game = $('#game').value;
+  const users = await api('GET', `/api/users?q=${encodeURIComponent(q)}&game=${encodeURIComponent(game)}`);
+  $('#list').innerHTML = users.length ? users.map(userCard).join('') : '<div class="empty">ไม่พบผู้เล่นตามเงื่อนไข</div>';
+}
+function bindSearch() {
+  $('#q').oninput = debounce(() => loadUsers().catch((e) => toast(esc(e.message))), 300);
+  $('#game').onchange = () => loadUsers().catch((e) => toast(esc(e.message)));
+}
+
+// ===== Views =====
+async function vHome() {
+  layout({
+    title: 'GameBuddy', tab: 'home',
+    right: `<button class="icon" onclick="go('#/find')">🔍</button>`,
+    body: `
+      <section class="card hero">
+        <div><b>สวัสดี ${esc(state.me.displayName)} 👋</b><div class="small">หาตี้เล่นเกมได้ที่นี่</div></div>
+        <button class="btn" onclick="go('#/match')">🎮 Auto match</button>
+      </section>
+      <div class="filters"><select id="rgame" style="flex:1">${gameOptions()}</select><button class="btn primary sm" onclick="go('#/room-new')">+ สร้างห้อง</button></div>
+      <h3 class="sec">ห้องที่เปิดอยู่</h3>
+      <div id="rooms" class="list"><div class="muted center">กำลังโหลด...</div></div>`,
+  });
+  $('#rgame').onchange = () => loadRooms().catch((e) => toast(esc(e.message)));
+  await loadRooms();
+  vTimer = setInterval(() => loadRooms().catch(() => {}), 5000);
+}
+
+async function loadRooms() {
+  const el = $('#rooms');
+  if (!el) return;
+  const rooms = await api('GET', `/api/rooms?game=${encodeURIComponent($('#rgame').value)}`);
+  el.innerHTML = rooms.length
+    ? rooms.map(roomCard).join('')
+    : '<div class="empty">ยังไม่มีห้องเปิดอยู่<br><span class="small">กด “+ สร้างห้อง” แล้วชวนคนมาร่วมได้เลย</span></div>';
+}
+const roomCard = (r) => {
+  const full = r.slotsLeft <= 0;
+  const badge = full ? '<span class="tag">เต็มแล้ว</span>' : `<span class="badge">ขาด ${r.slotsLeft} คน</span>`;
+  const action = r.joined
+    ? `<button class="btn sm" onclick="go('#/room/${r.id}')">เข้าห้อง</button>`
+    : full
+      ? '<button class="btn sm" disabled>เต็ม</button>'
+      : `<button class="btn sm pink" onclick="joinRoom('${r.id}')">เข้าร่วม</button>`;
+  const slots = Array.from({ length: Math.max(0, r.slotsLeft) }).map(() => '<span class="av sm" style="opacity:.35">＋</span>').join('');
+  return `<div class="card">
+    <div class="row">
+      <div class="grow">
+        <div class="muted small">🎮 ${esc(r.game)} · ${timeAgo(r.createdAt)}</div>
+        <div class="name">${esc(r.title)}</div>
+        <div class="muted small">โดย ${esc(r.host?.displayName || '-')}${r.note ? ` · 🕒 ${esc(r.note)}` : ''}</div>
+      </div>
+      ${badge}
+    </div>
+    <div class="avrow">${r.members.map((m) => `<span class="av sm" title="${esc(m.displayName)}">${esc(m.avatar)}</span>`).join('')}${slots}</div>
+    <div class="row" style="justify-content:space-between;margin-top:8px">
+      <span class="muted small">${r.count}/${r.size} คน</span>${action}
+    </div>
+  </div>`;
+};
+// เข้าห้องแล้วพาไปหน้าแชทของห้องทันที
+async function joinRoom(id) {
+  try {
+    await api('POST', `/api/rooms/${id}/join`);
+    toast('เข้าร่วมห้องแล้ว 🎉');
+    go('#/room/' + id);
+  } catch (e) { toast(esc(e.message)); }
+}
+
+function vRoomNew() {
+  layout({
+    title: 'สร้างห้อง', back: true, tab: 'home',
+    body: `<form id="rform" class="card form">
+      <label>เกม<select name="game">${state.meta.games.map((g) => `<option>${esc(g)}</option>`).join('')}</select></label>
+      <label>ชื่อห้อง<input name="title" maxlength="40" placeholder="เช่น หาซิลเวอร์ขึ้นไป ลงแรงค์"></label>
+      <label>จำนวนผู้เล่นทั้งหมด (รวมคุณ)<select name="size">${[2, 3, 4, 5, 6, 8, 10].map((n) => `<option ${n === 5 ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+      <label>เวลา / หมายเหตุ (ไม่บังคับ)<input name="note" maxlength="80" placeholder="เช่น คืนนี้ 21:00"></label>
+      <button class="btn primary">สร้างห้อง</button>
+    </form>`,
+  });
+  $('#rform').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('POST', '/api/rooms', Object.fromEntries(new FormData(e.target)));
+      toast('สร้างห้องแล้ว 🎉');
+      go('#/room/' + r.id);
+    } catch (err) { toast(esc(err.message)); }
+  };
+}
+
+async function vFind() {
+  layout({
+    title: 'ค้นหาผู้เล่น', back: true, tab: 'chat',
+    body: `<div class="filters"><input id="q" class="search" placeholder="ชื่อหรือชื่อผู้ใช้"><select id="game">${gameOptions()}</select></div>
+      <div id="list" class="list"></div>`,
+  });
+  bindSearch();
+  await loadUsers();
+}
+
+async function vChat(tab) {
+  const groups = tab === 'groups';
+  layout({
+    title: 'แชท', tab: 'chat',
+    right: `<button class="icon" onclick="go('#/find')">＋</button>`,
+    body: `<div class="seg">
+        <button class="${groups ? '' : 'on'}" onclick="go('#/chat/dm')">ข้อความส่วนตัว</button>
+        <button class="${groups ? 'on' : ''}" onclick="go('#/chat/groups')">กลุ่ม</button>
+      </div>
+      <div id="list" class="list"></div>`,
+  });
+  if (!groups) {
+    const [dms, fr] = await Promise.all([api('GET', '/api/dm'), api('GET', '/api/friends')]);
+    $('#list').innerHTML = `
+      <a class="card row link" href="#/friends">
+        <div class="ic">👥</div>
+        <div class="grow"><b>เพื่อนและคำขอ</b><div class="muted small">เพื่อน ${fr.friends.length} คน${fr.incoming.length ? ` · คำขอใหม่ ${fr.incoming.length}` : ''}</div></div>›
+      </a>
+      <a class="card row link" href="#/visitors">
+        <div class="ic">🐾</div>
+        <div class="grow"><b>ผู้เข้าชมโปรไฟล์</b><div class="muted small">ดูว่าใครเข้ามาดูโปรไฟล์ของคุณ</div></div>›
+      </a>
+      <h3 class="sec">ข้อความ</h3>
+      ${dms.length ? dms.map((d) => `<a class="card row link" href="#/dm/${d.user.id}">
+          ${avatarHtml(d.user)}
+          <div class="grow"><div class="name">${esc(d.user.displayName)}</div>
+            <div class="muted small ellipsis">${d.last ? (d.last.mine ? 'คุณ: ' : '') + esc(d.last.text) : 'ยังไม่มีข้อความ'}</div></div>
+          ${d.unread ? `<span class="badge">${d.unread}</span>` : ''}
+        </a>`).join('') : `<div class="empty">ยังไม่มีข้อความ<br><span class="small">เพิ่มเพื่อนแล้วเริ่มคุยกันได้เลย</span></div>`}`;
+  } else {
+    const list = await api('GET', '/api/groups');
+    $('#list').innerHTML = `<button class="btn primary" onclick="go('#/groups-new')">+ สร้างกลุ่มใหม่</button>
+      <div style="height:10px"></div>
+      ${list.length ? list.map((g) => `<a class="card row link" href="#/group/${g.id}">
+          <div class="ic">🎮</div>
+          <div class="grow"><div class="name">${esc(g.name)} ${g.joined ? '<span class="tag">เข้าร่วมแล้ว</span>' : ''}</div>
+            <div class="muted small">${esc(g.game || 'ทั่วไป')} · ${g.members} สมาชิก</div></div>›
+        </a>`).join('') : '<div class="empty">ยังไม่มีกลุ่ม ลองสร้างกลุ่มแรกดูสิ</div>'}`;
+  }
+}
+
+async function vDM(uid) {
+  const d = await api('GET', `/api/dm/${uid}`);
+  let reqId = '';
+  if (d.rel === 'incoming') reqId = (await api('GET', '/api/friends')).incoming.find((x) => x.user.id === uid)?.requestId || '';
+  const notice = {
+    none: `<button class="btn sm pink" onclick="addFriend('${uid}')">+ เพิ่มเพื่อน</button>`,
+    incoming: `<button class="btn sm pink" onclick="acceptReq('${reqId}')">ตอบรับคำขอ</button>`,
+    outgoing: `<span class="tag">รอการตอบรับ</span>`,
+  }[d.rel] || '';
+  layout({
+    title: d.user.displayName, back: true, tab: 'chat',
+    right: `<button class="icon" onclick="go('#/user/${uid}')">ⓘ</button>`,
+    body: `<div class="msgs" id="msgs"></div>
+      ${d.rel === 'friends' ? composerHtml : `<div class="notice"><span>ต้องเป็นเพื่อนกันก่อนจึงจะส่งข้อความได้</span>${notice}</div>`}`,
+  });
+  const el = $('#msgs');
+  paintMsgs(el, bubbles(d.messages, false), true);
+  bindComposer(async (t, img) => {
+    await api('POST', `/api/dm/${uid}`, { text: t, image: img || undefined });
+    const x = await api('GET', `/api/dm/${uid}`);
+    paintMsgs(el, bubbles(x.messages, false), true);
+  });
+  vTimer = setInterval(async () => {
+    try { const x = await api('GET', `/api/dm/${uid}`); paintMsgs(el, bubbles(x.messages, false)); } catch {}
+  }, 3000);
+}
+
+async function vGroup(id) {
+  const g = await api('GET', `/api/groups/${id}`);
+  const right = g.joined
+    ? `<button class="btn sm" onclick="leaveGroup('${id}')">ออก</button>`
+    : `<button class="btn sm pink" onclick="joinGroup('${id}')">เข้าร่วม</button>`;
+  layout({
+    title: g.name, back: true, tab: 'chat', right,
+    body: `<div class="card">
+        <div class="muted small">🎮 ${esc(g.game || 'ทั่วไป')} · ${g.members.length} สมาชิก</div>
+        ${g.description ? `<p>${esc(g.description)}</p>` : ''}
+        <div class="avrow">${g.members.map((m) => `<span class="av sm" title="${esc(m.displayName)}">${esc(m.avatar)}</span>`).join('')}</div>
+      </div>
+      ${g.joined ? `<div class="msgs" id="msgs"></div>${composerHtml}` : '<div class="notice">เข้าร่วมกลุ่มเพื่อดูและส่งข้อความ</div>'}`,
+  });
+  if (!g.joined) return;
+  const el = $('#msgs');
+  const load = async (force) => {
+    const ms = await api('GET', `/api/groups/${id}/messages`);
+    paintMsgs(el, bubbles(ms, true), force);
+  };
+  await load(true);
+  bindComposer(async (t, img) => { await api('POST', `/api/groups/${id}/messages`, { text: t, image: img || undefined }); await load(true); });
+  vTimer = setInterval(() => load(false).catch(() => {}), 3000);
+}
+
+async function joinGroup(id) { act(() => api('POST', `/api/groups/${id}/join`)); }
+async function leaveGroup(id) {
+  try { await api('POST', `/api/groups/${id}/leave`); toast('ออกจากกลุ่มแล้ว'); go('#/chat/groups'); }
+  catch (e) { toast(esc(e.message)); }
+}
+
+function vGroupNew() {
+  layout({
+    title: 'สร้างกลุ่ม', back: true, tab: 'chat',
+    body: `<form id="gform" class="card form">
+      <label>ชื่อกลุ่ม<input name="name" maxlength="30" required></label>
+      <label>เกม<select name="game"><option value="">ทั่วไป</option>${state.meta.games.map((g) => `<option>${esc(g)}</option>`).join('')}</select></label>
+      <label>คำอธิบาย<textarea name="description" maxlength="120"></textarea></label>
+      <button class="btn primary">สร้างกลุ่ม</button>
+    </form>`,
+  });
+  $('#gform').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('POST', '/api/groups', Object.fromEntries(new FormData(e.target)));
+      toast('สร้างกลุ่มแล้ว 🎉');
+      go('#/group/' + r.id);
+    } catch (err) { toast(esc(err.message)); }
+  };
+}
+
+// ===== หน้าแชทห้อง และการออกจากห้อง =====
+const roomComposer = `<form class="composer" id="composer"><input id="msgIn" maxlength="300" placeholder="พิมพ์ข้อความ..." autocomplete="off"><button class="btn primary">ส่ง</button></form>`;
+async function vRoom(id) {
+  const r = await api('GET', `/api/rooms/${id}`);
+  if (!r.joined) { toast('คุณไม่ได้อยู่ในห้องนี้'); return go('#/home'); }
+  layout({
+    title: r.title, back: true, tab: 'home',
+    right: `<button class="btn sm" onclick="openLeave('${id}')">ออกจากห้อง</button>`,
+    body: `<div class="card">
+        <div class="muted small">🎮 ${esc(r.game)}${r.note ? ` · 🕒 ${esc(r.note)}` : ''} · ${r.count}/${r.size} คน</div>
+        <div class="avrow">${r.members.map((m) => `<span class="av sm" title="${esc(m.displayName)}">${esc(m.avatar)}</span>`).join('')}</div>
+      </div>
+      <div class="msgs" id="msgs"></div>${roomComposer}`,
+  });
+  const el = $('#msgs');
+  const load = async (force) => {
+    try {
+      const ms = await api('GET', `/api/rooms/${id}/messages`);
+      paintMsgs(el, bubbles(ms, true), force);
+    } catch (e) {
+      stopViewTimer();
+      toast(esc(e.message));
+      go('#/home');
+    }
+  };
+  await load(true);
+  $('#composer').onsubmit = async (e) => {
+    e.preventDefault();
+    const i = $('#msgIn');
+    const t = i.value.trim();
+    if (!t) return;
+    i.value = '';
+    try { await api('POST', `/api/rooms/${id}/messages`, { text: t }); await load(true); }
+    catch (err) { toast(esc(err.message)); i.value = t; }
+  };
+  vTimer = setInterval(() => load(false), 3000);
+}
+
+function closeLeave() { $('#leaveModal')?.remove(); }
+async function openLeave(id) {
+  let r;
+  try { r = await api('GET', `/api/rooms/${id}`); } catch (e) { return toast(esc(e.message)); }
+  closeLeave();
+  const left = Math.max(0, r.canLeaveAt - Date.now());
+  const wait = left > 0 ? `<p class="muted small">ต้องอยู่ในห้องอีก ${Math.ceil(left / 1000)} วินาทีก่อนออก</p>` : '';
+  const stars = (u) => [1, 2, 3, 4, 5].map((s) => `<button type="button" onclick="rateMember('${id}','${u.id}',${s})" style="background:none;border:0;font-size:24px;color:#ffb74d;cursor:pointer">★</button>`).join('');
+  const reviews = r.unrated.length
+    ? `<p class="small muted">รีวิวผู้เล่นที่ยังไม่ได้รีวิว:</p>${r.unrated.map((u) => `<div class="row" style="margin:6px 0"><span class="grow">${esc(u.displayName)}</span>${stars(u)}</div>`).join('')}`
+    : '<p class="small">รีวิวผู้เล่นครบแล้ว ✅</p>';
+  const m = document.createElement('div');
+  m.id = 'leaveModal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:60;padding:16px';
+  m.innerHTML = `<div class="card" style="width:100%;max-width:400px;margin:0">
+    <h3>ออกจากห้อง</h3>
+    ${wait}
+    ${reviews}
+    <button class="btn primary block" onclick="leaveWith('${id}','review')">ออกเมื่อรีวิวครบ</button>
+    <button class="btn block" onclick="leaveWith('${id}','pay')">จ่าย 5 เครดิตเพื่อข้ามรีวิว</button>
+    <button class="btn block" onclick="adLeave('${id}')">ดูโฆษณา 15 วินาทีเพื่อข้ามรีวิว</button>
+    <button class="btn block" onclick="closeLeave()">ยกเลิก</button>
+  </div>`;
+  m.addEventListener('click', (e) => { if (e.target === m) closeLeave(); });
+  document.body.appendChild(m);
+}
+async function rateMember(id, uid, score) {
+  try {
+    await api('POST', `/api/users/${uid}/rate`, { score, comment: '' });
+    toast('รีวิวแล้ว ⭐');
+    await openLeave(id);
+  } catch (e) { toast(esc(e.message)); }
+}
+async function leaveWith(id, mode) {
+  try {
+    await api('POST', `/api/rooms/${id}/leave`, { mode });
+    closeLeave();
+    toast('ออกจากห้องแล้ว');
+    go('#/home');
+  } catch (e) { toast(esc(e.message)); }
+}
+async function adLeave(id) {
+  try {
+    await api('POST', `/api/rooms/${id}/ad-start`);
+    toast('กำลังแสดงโฆษณา...');
+    await new Promise((res) => setTimeout(res, 15000));
+    await leaveWith(id, 'ad');
+  } catch (e) { toast(esc(e.message)); }
+}
+
+function vMatch() {
+  layout({ title: 'Auto match', tab: 'match', body: '<div id="mbody"></div>' });
+  drawMatch();
+}
+function drawMatch() {
+  const el = $('#mbody');
+  if (!el) return;
+  const m = state.match || {};
+  if (state.matchFound) {
+    const f = state.matchFound;
+    el.innerHTML = `<div class="card match-box">
+      <div class="big">🎉</div>
+      <h2>พบคู่เล่นแล้ว!</h2>
+      <div class="muted">${esc(f.match.game)}</div>
+      ${avatarHtml(f.partner, 'lg')}
+      <div class="name">${esc(f.partner.displayName)}</div>
+      <div class="row gap" style="margin-top:14px">
+        <button class="btn primary" onclick="state.matchFound=null;go('#/dm/${f.partner.id}')">💬 ส่งข้อความ</button>
+        <button class="btn" onclick="state.matchFound=null;drawMatch()">ปิด</button>
+      </div></div>`;
+    return;
+  }
+  if (m.searching) {
+    const secs = Math.max(0, Math.floor((Date.now() - (m.since || Date.now())) / 1000));
+    el.innerHTML = `<div class="card match-box">
+      <div class="radar">🎮</div>
+      <h2>กำลังค้นหาคู่เล่น</h2>
+      <div class="muted">${esc(m.game)} · รอแล้ว ${secs} วินาที</div>
+      <p class="muted small">ระบบจะแจ้งเมื่อพบผู้เล่นที่เลือกเกมเดียวกัน</p>
+      <button class="btn" onclick="stopMatch()">ยกเลิกการค้นหา</button></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="card">
+      <h3>เลือกเกมที่อยากเล่น</h3>
+      <div class="games">${state.meta.games.map((g) => `<button class="game-btn" onclick="startMatch('${esc(g)}')">${esc(g)}</button>`).join('')}</div>
+      <p class="muted small">ระบบจะจับคู่กับผู้เล่นที่เลือกเกมเดียวกันและกำลังค้นหาอยู่</p>
+    </div>
+    <h3 class="sec">ประวัติการจับคู่</h3>
+    <div id="hist" class="list"></div>`;
+  api('GET', '/api/matches').then((list) => {
+    const h = $('#hist');
+    if (h) h.innerHTML = list.length ? list.slice(0, 5).map(matchRow).join('') : '<div class="empty small">ยังไม่มีประวัติ</div>';
+  }).catch(() => {});
+}
+const matchRow = (x) => `<div class="card row">
+  <div class="grow"><b>${esc(x.game)}</b> กับ ${esc(x.partner?.displayName || '-')}<div class="muted small">${timeAgo(x.at)}</div></div>
+  ${x.partner ? `<button class="btn sm" onclick="go('#/dm/${x.partner.id}')">💬</button>` : ''}
+</div>`;
+async function startMatch(game) {
+  try {
+    const r = await api('POST', '/api/match/start', { game });
+    state.match = r.searching ? { searching: true, game, since: Date.now() } : { searching: false };
+    if (r.result) state.matchFound = r.result;
+    drawMatch();
+  } catch (e) { toast(esc(e.message)); }
+}
+async function stopMatch() {
+  try { await api('POST', '/api/match/stop'); } catch {}
+  state.match = { searching: false };
+  drawMatch();
+}
+async function vMatches() {
+  const list = await api('GET', '/api/matches');
+  layout({
+    title: 'ประวัติการจับคู่', back: true, tab: 'me',
+    body: list.length ? `<div class="list">${list.map(matchRow).join('')}</div>` : '<div class="empty">ยังไม่มีประวัติการจับคู่</div>',
+  });
+}
+
+async function vNotif() {
+  const [n, fr] = await Promise.all([api('GET', '/api/notifications'), api('GET', '/api/friends')]);
+  layout({
+    title: 'การแจ้งเตือน', tab: 'notif',
+    right: `<button class="btn sm" onclick="readAll()">อ่านทั้งหมด</button>`,
+    body: `
+      ${fr.incoming.length ? `<h3 class="sec">คำขอเป็นเพื่อน <span class="badge">${fr.incoming.length}</span></h3>
+        ${fr.incoming.map((r) => `<div class="card row">${avatarHtml(r.user)}
+          <div class="grow"><b>${esc(r.user.displayName)}</b><div class="muted small">อยากเป็นเพื่อนกับคุณ</div></div>
+          <button class="btn sm pink" onclick="acceptReq('${r.requestId}')">ตอบรับ</button></div>`).join('')}` : ''}
+      <h3 class="sec">ทั้งหมด</h3>
+      ${n.items.length ? `<div class="list">${n.items.map((x) => `<div class="card row notif ${x.read ? '' : 'unread'}" style="cursor:pointer" onclick="go('${NOTIF_LINK[x.type] || '#/home'}')">
+          <div class="ic">${ICON[x.type] || '🔔'}</div>
+          <div class="grow"><div>${esc(x.text)}</div><div class="muted small">${timeAgo(x.at)}</div></div>
+        </div>`).join('')}</div>` : '<div class="empty">ยังไม่มีการแจ้งเตือน</div>'}`,
+  });
+}
+async function readAll() {
+  try { await api('POST', '/api/notifications/read'); state.notifUnread = 0; render(); }
+  catch (e) { toast(esc(e.message)); }
+}
+
+async function vMe() {
+  const [me, fr, vis] = await Promise.all([
+    api('GET', `/api/users/${state.me.id}`),
+    api('GET', '/api/friends'),
+    api('GET', '/api/visitors'),
+  ]);
+  state.me = { ...state.me, ...me };
+  layout({
+    title: 'My Page', tab: 'me',
+    right: `<button class="icon" onclick="go('#/me-edit')">✎</button>`,
+    body: `${profileHeader(me)}
+      <div class="stats">
+        <button class="stat" onclick="go('#/friends')"><b>${fr.friends.length}</b><span>เพื่อน</span></button>
+        <button class="stat" onclick="go('#/visitors')"><b>${vis.length}</b><span>ผู้เข้าชม</span></button>
+        <button class="stat" onclick="go('#/matches')"><b>${me.rating.count}</b><span>รีวิว</span></button>
+      </div>
+      <div class="card"><h3>รีวิวจากเพื่อนร่วมเล่น</h3>${ratingsHtml(me)}</div>
+      <div class="list">
+        <a class="card row link" href="#/matches"><span class="ic">🎮</span><span class="grow">ประวัติการจับคู่</span>›</a>
+        <a class="card row link" href="#/friends"><span class="ic">👥</span><span class="grow">เพื่อนและคำขอ</span>›</a>
+        <a class="card row link" href="#/visitors"><span class="ic">🐾</span><span class="grow">ผู้เข้าชมโปรไฟล์</span>›</a>
+        ${state.me?.isAdmin ? '<a class="card row link" href="#/admin"><span class="ic">🛠️</span><span class="grow">ผู้ดูแลระบบ</span>›</a>' : ''}
+        <a class="card row link" href="#/wallet"><span class="ic">💰</span><span class="grow">กระเป๋าเงินและเครดิต (${state.wallet?.credits ?? 0})</span>›</a>
+        <a class="card row link" href="#/me-edit"><span class="ic">✏️</span><span class="grow">แก้ไขโปรไฟล์</span>›</a>
+        <button class="card row link danger" onclick="logout()"><span class="ic">🚪</span><span class="grow">ออกจากระบบ</span></button>
+      </div>`,
+  });
+}
+
+async function vAdmin(tab = 'stats') {
+  if (!state.me?.isAdmin) return go('#/me');
+  const tabs = [['stats', 'สถิติ'], ['users', 'ผู้ใช้'], ['orders', 'ออเดอร์'], ['announce', 'ประกาศ'], ['password', 'รหัสผ่าน']];
+  const seg = `<div class="seg">${tabs.map(([k, l]) => `<button class="${k === tab ? 'on' : ''}" onclick="go('#/admin/${k}')">${l}</button>`).join('')}</div>`;
+  const title = 'ผู้ดูแลระบบ';
+
+  if (tab === 'stats') {
+    const s = await api('GET', '/api/admin/stats');
+    layout({ title, back: true, tab: 'me', body: seg + `<div class="stats six">
+      <div class="stat"><b>${s.users}</b><span>ผู้ใช้</span></div>
+      <div class="stat"><b>${s.friendships}</b><span>ความเป็นเพื่อน</span></div>
+      <div class="stat"><b>${s.messages}</b><span>ข้อความ</span></div>
+      <div class="stat"><b>${s.groups}</b><span>กลุ่ม</span></div>
+      <div class="stat"><b>${s.paidOrders}</b><span>ออเดอร์ที่จ่ายแล้ว</span></div>
+      <div class="stat"><b>${s.revenue}</b><span>รายได้ (บาท)</span></div>
+    </div>` });
+    return;
+  }
+
+  if (tab === 'users') {
+    const list = await api('GET', '/api/admin/users');
+    layout({ title, back: true, tab: 'me', body: seg + `<input id="uq" class="search" placeholder="ค้นหาผู้ใช้...">
+      <div id="ulist" class="list" style="margin-top:10px"></div>` });
+    const draw = () => {
+      const q = $('#uq').value.trim().toLowerCase();
+      const rows = list.filter((u) => !q || u.username.includes(q) || u.displayName.toLowerCase().includes(q));
+      $('#ulist').innerHTML = rows.length ? rows.map((u) => `<div class="card row">
+        ${avatarHtml(u, 'sm')}
+        <div class="grow"><b>${esc(u.displayName)}</b> <span class="muted small">@${esc(u.username)}</span>${u.isAdmin ? ' <span class="tag">admin</span>' : ''}
+          <div class="muted small">เครดิต ${u.credits} · ${u.adFree ? 'ปิดโฆษณาแล้ว' : 'มีโฆษณา'} · สมัคร ${timeAgo(u.createdAt)}</div></div>
+        <button class="btn sm" onclick="adjustCredits('${u.id}')">เครดิต</button>
+        ${u.isAdmin ? '' : `<button class="btn sm ghost" onclick="deleteUser('${u.id}','${esc(u.username)}')">ลบ</button>`}
+      </div>`).join('') : '<div class="empty">ไม่พบผู้ใช้</div>';
+    };
+    $('#uq').oninput = draw;
+    draw();
+    return;
+  }
+
+  if (tab === 'password') {
+    layout({ title, back: true, tab: 'me', body: seg + `<form id="pwForm" class="card form">
+      <label>รหัสผ่านใหม่ของผู้ดูแลระบบ (อย่างน้อย 6 ตัว)</label>
+      <input name="password" type="password" minlength="6" required autocomplete="new-password">
+      <button class="btn primary">เปลี่ยนรหัสผ่าน</button>
+    </form>` });
+    $('#pwForm').onsubmit = async (e) => {
+      e.preventDefault();
+      try {
+        await api('POST', '/api/admin/password', { password: new FormData(e.target).get('password') });
+        toast('เปลี่ยนรหัสผ่านแล้ว ✅');
+        e.target.reset();
+      } catch (err) { toast(esc(err.message)); }
+    };
+    return;
+  }
+
+  if (tab === 'orders') {
+    const list = await api('GET', '/api/admin/orders');
+    layout({ title, back: true, tab: 'me', body: seg + (list.length
+      ? `<div class="list">${list.map((o) => `<div class="card row"><div class="grow">
+          <b>@${esc(o.username)}</b> · ${o.credits} เครดิต · ${o.price} บาท
+          <div class="muted small">${o.status === 'paid' ? 'จ่ายแล้ว' : 'รอชำระ'} · ${timeAgo(o.at)}</div>
+        </div></div>`).join('')}</div>`
+      : '<div class="empty">ยังไม่มีออเดอร์</div>') });
+    return;
+  }
+
+  layout({ title, back: true, tab: 'me', body: seg + `<form id="annForm" class="card form">
+    <label>ข้อความประกาศถึงผู้ใช้ทุกคน (ไม่เกิน 200 ตัวอักษร)</label>
+    <textarea name="text" maxlength="200" required></textarea>
+    <button class="btn primary">ส่งประกาศ</button>
+  </form>` });
+  $('#annForm').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('POST', '/api/admin/announce', { text: new FormData(e.target).get('text') });
+      toast(`ส่งประกาศถึง ${r.sent} คนแล้ว`);
+      e.target.reset();
+    } catch (err) { toast(esc(err.message)); }
+  };
+}
+async function adjustCredits(id) {
+  const v = prompt('ใส่จำนวนเครดิตที่จะเพิ่ม (ใส่ลบเพื่อหักออก เช่น -5)', '10');
+  if (v === null) return;
+  act(() => api('POST', `/api/admin/users/${id}/credits`, { amount: Number(v) }).then(() => toast('อัปเดตเครดิตแล้ว')));
+}
+function deleteUser(id, name) {
+  if (!confirm(`ลบบัญชี @${name} ใช่ไหม การลบกู้คืนไม่ได้`)) return;
+  act(() => api('DELETE', `/api/admin/users/${id}`).then(() => toast('ลบบัญชีแล้ว')));
+}
+
+async function vWallet() {
+  const w = await api('GET', '/api/wallet');
+  state.wallet = w;
+  layout({
+    title: 'กระเป๋าเงิน', back: true, tab: 'me',
+    body: `<div class="card center">
+        <div class="muted small">เครดิตคงเหลือ</div>
+        <div class="big-num">${w.credits}</div>
+        <div class="muted small">ส่งรูป 1 รูป ใช้ ${w.imageCost} เครดิต</div>
+      </div>
+      <h3 class="sec">เติมเครดิต</h3>
+      <div class="list">${w.packs.map((p) => `<button class="card row link" onclick="topup('${p.id}')"><span class="ic">💰</span><span class="grow"><b>${esc(p.label)}</b><div class="muted small">จ่าย ${p.price} บาท ผ่าน PromptPay</div></span>›</button>`).join('')}</div>
+      <h3 class="sec">ปิดโฆษณา</h3>
+      <div class="card row"><div class="grow">${w.adFree ? '✅ ปิดโฆษณาแล้ว' : `ใช้ ${w.adFreeCost} เครดิต เพื่อปิดโฆษณาถาวร`}</div>
+        ${w.adFree ? '' : `<button class="btn sm pink" onclick="buyAdFree()">ปิดโฆษณา</button>`}</div>
+      ${w.mode === 'mock' ? '<p class="muted small center">โหมดทดสอบ: กดเติมแล้วจะได้เครดิตทันที ยังไม่มีการเก็บเงินจริง</p>' : '<p class="muted small center">ระบบชำระเงินออนไลน์ยังไม่เปิดให้บริการ ติดต่อผู้ดูแลระบบเพื่อซื้อเครดิต</p>'}`,
+  });
+}
+async function topup(pack) {
+  try {
+    const o = await api('POST', '/api/wallet/topup', { pack });
+    if (o.mode === 'mock') {
+      if (!confirm(`[ทดสอบ] จำลองการชำระ ${o.amount} บาท?`)) return;
+      await api('POST', '/api/wallet/confirm', { orderId: o.orderId });
+      toast('เติมเครดิตแล้ว 🎉');
+    } else {
+      toast('ระบบชำระเงินยังไม่ได้เชื่อมต่อ');
+    }
+    render();
+  } catch (e) { toast(esc(e.message)); }
+}
+function buyAdFree() { act(() => api('POST', '/api/wallet/adfree').then(() => toast('ปิดโฆษณาแล้ว ✅'))); }
+
+// เลือกรูปจากเครื่อง ย่อขนาดในเบราว์เซอร์ก่อนส่ง
+function pickImage(maxSide, mime, cb) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/png,image/jpeg,image/webp,image/gif';
+  input.onchange = () => {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) return toast('ไฟล์ใหญ่เกิน 8 MB');
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * s));
+      c.height = Math.max(1, Math.round(img.height * s));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      cb(c.toDataURL(mime, 0.85));
+    };
+    img.onerror = () => toast('เปิดรูปนี้ไม่ได้');
+    img.src = URL.createObjectURL(file);
+  };
+  input.click();
+}
+
+async function vEdit() {
+  const me = state.me, S = state.meta;
+  const opts = (list, v) => list.map((x) => `<option ${x === v ? 'selected' : ''}>${esc(x)}</option>`).join('');
+  layout({
+    title: 'แก้ไขโปรไฟล์', back: true, tab: 'me',
+    body: `<form id="eform" class="card form">
+      <label>รูปประจำตัว</label>
+      <div class="row" style="gap:12px;margin-bottom:8px"><div class="av lg" id="prevAv">${avatarInner(me)}</div><div class="grow"><button type="button" class="btn sm" id="upAv">📷 อัปโหลดรูป</button> <button type="button" class="btn sm" id="upFr">🖼️ ใส่กรอบ</button> <button type="button" class="btn sm" id="rmFr">ลบกรอบ</button></div></div>
+      <div class="small muted">หรือเลือก emoji ด้านล่าง</div>
+      <div class="avpick">${S.avatars.map((a) => `<button type="button" class="av pick ${a === me.avatar ? 'on' : ''}" data-a="${a}">${a}</button>`).join('')}</div>
+      <label>ชื่อที่แสดง<input name="displayName" maxlength="24" value="${esc(me.displayName)}"></label>
+      <label>แนะนำตัว<textarea name="bio" maxlength="200">${esc(me.bio)}</textarea></label>
+      <label>เกมที่เล่น (สูงสุด 6)</label>
+      <div class="games" id="gpick">${S.games.map((g) => `<button type="button" class="game-btn ${me.games.includes(g) ? 'on' : ''}">${esc(g)}</button>`).join('')}</div>
+      <label>แพลตฟอร์ม<select name="platform">${opts(S.platforms, me.platform)}</select></label>
+      <label>ระดับฝีมือ<select name="level">${opts(S.levels, me.level)}</select></label>
+      <label>เวลาที่สะดวกเล่น<input name="schedule" maxlength="80" value="${esc(me.schedule)}" placeholder="เช่น เสาร์-อาทิตย์ 19:00-22:00"></label>
+      <button class="btn primary">บันทึก</button>
+    </form>`,
+  });
+  let avatar = me.avatar;
+  let frame = me.frame ?? null;
+  const refreshPrev = () => { $('#prevAv').innerHTML = avatarInner({ avatar, frame }); };
+  $('#upAv').onclick = () => pickImage(256, 'image/jpeg', (d) => { avatar = d; refreshPrev(); });
+  $('#upFr').onclick = () => pickImage(360, 'image/png', (d) => { frame = d; refreshPrev(); });
+  $('#rmFr').onclick = () => { frame = null; refreshPrev(); };
+  document.querySelectorAll('.avpick button').forEach((b) => b.onclick = () => {
+    avatar = b.dataset.a;
+    refreshPrev();
+    document.querySelectorAll('.avpick button').forEach((x) => x.classList.toggle('on', x === b));
+  });
+  document.querySelectorAll('#gpick button').forEach((b) => b.onclick = () => {
+    const picked = document.querySelectorAll('#gpick .on').length;
+    if (!b.classList.contains('on') && picked >= 6) return toast('เลือกได้สูงสุด 6 เกม');
+    b.classList.toggle('on');
+  });
+  $('#eform').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = Object.fromEntries(new FormData(e.target));
+    const games = [...document.querySelectorAll('#gpick .on')].map((b) => b.textContent);
+    try {
+      state.me = { ...state.me, ...(await api('PUT', '/api/me', { ...f, avatar, games, frame })) };
+      toast('บันทึกแล้ว ✅');
+      go('#/me');
+    } catch (err) { toast(esc(err.message)); }
+  };
+}
+
+async function vUser(id) {
+  if (id === state.me.id) return go('#/me');
+  const [u, fr] = await Promise.all([api('GET', `/api/users/${id}`), api('GET', '/api/friends')]);
+  let actions = '';
+  if (u.rel === 'friends') {
+    const fid = fr.friends.find((x) => x.id === id)?.friendshipId;
+    actions = `<button class="btn primary" onclick="go('#/dm/${id}')">💬 ส่งข้อความ</button>
+      <button class="btn" onclick="dropReq('${fid}','ลบเพื่อนคนนี้?')">ลบเพื่อน</button>`;
+  } else if (u.rel === 'incoming') {
+    const rid = fr.incoming.find((x) => x.user.id === id)?.requestId;
+    actions = `<button class="btn primary" onclick="acceptReq('${rid}')">ตอบรับคำขอ</button>
+      <button class="btn" onclick="dropReq('${rid}')">ปฏิเสธ</button>`;
+  } else if (u.rel === 'outgoing') {
+    const rid = fr.outgoing.find((x) => x.user.id === id)?.requestId;
+    actions = `<button class="btn" onclick="dropReq('${rid}','ยกเลิกคำขอ?')">ยกเลิกคำขอ</button>`;
+  } else {
+    actions = `<button class="btn primary" onclick="addFriend('${id}')">+ เพิ่มเพื่อน</button>`;
+  }
+  let sel = 0;
+  layout({
+    title: u.displayName, back: true,
+    body: `${profileHeader(u)}
+      <div class="actions">${actions}</div>
+      <div class="card">
+        <h3>ให้คะแนนผู้เล่นคนนี้</h3>
+        <div class="starpick" id="sp">${[1, 2, 3, 4, 5].map((i) => `<button type="button" data-s="${i}">★</button>`).join('')}</div>
+        <input id="rc" maxlength="200" placeholder="ความคิดเห็น (ไม่บังคับ)">
+        <button class="btn primary block" id="rbtn">ส่งคะแนน</button>
+      </div>
+      <div class="card"><h3>รีวิว</h3>${ratingsHtml(u)}</div>`,
+  });
+  document.querySelectorAll('#sp button').forEach((b) => b.onclick = () => {
+    sel = +b.dataset.s;
+    document.querySelectorAll('#sp button').forEach((x) => x.classList.toggle('on', +x.dataset.s <= sel));
+  });
+  $('#rbtn').onclick = () => {
+    if (!sel) return toast('เลือกจำนวนดาวก่อน');
+    api('POST', `/api/users/${id}/rate`, { score: sel, comment: $('#rc').value })
+      .then(() => { toast('ส่งคะแนนแล้ว ⭐'); render(); })
+      .catch((e) => toast(esc(e.message)));
+  };
+}
+
+async function vFriends() {
+  const f = await api('GET', '/api/friends');
+  const row = (u, actions) => `<div class="card row">${avatarHtml(u)}
+    <div class="grow"><b class="link-name" onclick="go('#/user/${u.id}')">${esc(u.displayName)}</b><div class="muted small">@${esc(u.username)}</div></div>
+    ${actions}</div>`;
+  layout({
+    title: 'เพื่อนและคำขอ', back: true, tab: 'chat',
+    body: `
+      <h3 class="sec">คำขอที่ได้รับ (${f.incoming.length})</h3>
+      ${f.incoming.length ? f.incoming.map((r) => row(r.user, `<button class="btn sm pink" onclick="acceptReq('${r.requestId}')">ตอบรับ</button><button class="btn sm" onclick="dropReq('${r.requestId}')">ปฏิเสธ</button>`)).join('') : '<div class="empty small">ไม่มีคำขอใหม่</div>'}
+      <h3 class="sec">คำขอที่ส่งไป (${f.outgoing.length})</h3>
+      ${f.outgoing.length ? f.outgoing.map((r) => row(r.user, `<button class="btn sm" onclick="dropReq('${r.requestId}','ยกเลิกคำขอ?')">ยกเลิก</button>`)).join('') : '<div class="empty small">ไม่มีคำขอที่ส่งไป</div>'}
+      <h3 class="sec">เพื่อน (${f.friends.length})</h3>
+      ${f.friends.length ? f.friends.map((u) => row(u, `<button class="btn sm" onclick="go('#/dm/${u.id}')">💬</button><button class="btn sm" onclick="dropReq('${u.friendshipId}','ลบเพื่อนคนนี้?')">ลบ</button>`)).join('') : '<div class="empty small">ยังไม่มีเพื่อน ลองค้นหาผู้เล่นดูสิ</div>'}`,
+  });
+}
+
+async function vVisitors() {
+  const v = await api('GET', '/api/visitors');
+  layout({
+    title: 'ผู้เข้าชมโปรไฟล์', back: true, tab: 'me',
+    body: v.length ? `<div class="list">${v.map((x) => `<a class="card row link" href="#/user/${x.viewer.id}">
+        ${avatarHtml(x.viewer)}
+        <div class="grow"><b>${esc(x.viewer.displayName)}</b><div class="muted small">${timeAgo(x.at)}</div></div>›
+      </a>`).join('')}</div>` : '<div class="empty">ยังไม่มีผู้เข้าชม</div>',
+  });
+}
+
+// ===== Startup =====
+(async function boot() {
+  // รับโทเคนจากการเข้าสู่ระบบด้วย Google (ส่งกลับมาทาง ?gt=)
+  const qs = new URLSearchParams(location.search);
+  if (qs.get('gt')) {
+    localStorage.setItem('gb_token', qs.get('gt'));
+    history.replaceState(null, '', '/' + location.hash);
+  }
+  state.token = localStorage.getItem('gb_token');
+  if (qs.get('err')) setTimeout(() => toast(esc(qs.get('err'))), 300);
+  try {
+    state.meta = await (await fetch('/api/meta')).json();
+  } catch {
+    document.body.insertAdjacentHTML('beforeend', '<p style="padding:20px">เซิร์ฟเวอร์ยังไม่พร้อม</p>');
+    return;
+  }
+  if (state.token) {
+    try { state.me = await api('GET', '/api/me'); startPolling(); }
+    catch { state.me = null; }
+  }
+  if (!state.me) { state.token = null; localStorage.removeItem('gb_token'); }
+  if (!location.hash) location.hash = '#/home';
+  render();
+})();
+</script>
+</body>
+</html>
